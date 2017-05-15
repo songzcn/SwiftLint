@@ -13,18 +13,16 @@ import XCTest
 class LinterCacheTests: XCTestCase {
 
     private class TestFileManager: LintableFileManager {
-        func filesToLint(inPath: String, rootDirectory: String? = nil) -> [String] {
+        fileprivate func filesToLint(inPath: String, rootDirectory: String? = nil) -> [String] {
             return []
         }
 
-        internal var stubbedModificationDateByPath: [String: Date] = [:]
+        fileprivate var stubbedModificationDateByPath: [String: Date] = [:]
 
-        public func modificationDate(forFileAtPath path: String) -> Date? {
+        fileprivate func modificationDate(forFileAtPath path: String) -> Date? {
             return stubbedModificationDateByPath[path]
         }
     }
-
-    private let fileManager = TestFileManager()
 
     func testInitThrowsWhenUsingDifferentVersion() {
         let cache = ["version": "0.1.0"]
@@ -63,6 +61,7 @@ class LinterCacheTests: XCTestCase {
 
     func testParsesViolations() {
         let cache = LinterCache(currentVersion: Version(value: "0.2.0"))
+        let fileManager = TestFileManager()
         cache.fileManager = fileManager
         let file = "foo.swift"
         let ruleDescription = RuleDescription(identifier: "rule", name: "Some rule",
@@ -88,6 +87,7 @@ class LinterCacheTests: XCTestCase {
 
     func testParsesViolationsWithEmptyViolations() {
         let cache = LinterCache(currentVersion: Version(value: "0.2.0"))
+        let fileManager = TestFileManager()
         cache.fileManager = fileManager
         let file = "foo.swift"
         fileManager.stubbedModificationDateByPath[file] = Date()
@@ -99,6 +99,7 @@ class LinterCacheTests: XCTestCase {
 
     func testParsesViolationsWithNoDate() {
         let cache = LinterCache(currentVersion: Version(value: "0.2.0"))
+        let fileManager = TestFileManager()
         cache.fileManager = fileManager
         let file = "foo.swift"
         let ruleDescription = RuleDescription(identifier: "rule", name: "Some rule",
@@ -124,6 +125,7 @@ class LinterCacheTests: XCTestCase {
 
     func testParsesViolationsWithDifferentDate() {
         let cache = LinterCache(currentVersion: Version(value: "0.2.0"))
+        let fileManager = TestFileManager()
         cache.fileManager = fileManager
         let file = "foo.swift"
         let ruleDescription = RuleDescription(identifier: "rule", name: "Some rule",
