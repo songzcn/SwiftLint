@@ -25,7 +25,7 @@ public final class LinterCache {
             Key.version.rawValue: currentVersion.value,
             Key.files.rawValue: [:]
         ]
-        cache[LinterCache.Key.configuration.rawValue] = configurationDescription
+        cache[Key.configuration.rawValue] = configurationDescription
     }
 
     public init(cache: Any, currentVersion: Version = .current, configurationDescription: String? = nil) throws {
@@ -58,12 +58,12 @@ public final class LinterCache {
         }
 
         lock.lock()
-        var filesCache = (cache[LinterCache.Key.files.rawValue] as? [String: Any]) ?? [:]
+        var filesCache = (cache[Key.files.rawValue] as? [String: Any]) ?? [:]
         filesCache[file] = [
             Key.violations.rawValue: violations.map(dictionary(for:)),
             Key.lastModification.rawValue: lastModification.timeIntervalSinceReferenceDate
         ]
-        cache[LinterCache.Key.files.rawValue] = filesCache
+        cache[Key.files.rawValue] = filesCache
         lock.unlock()
     }
 
@@ -74,7 +74,7 @@ public final class LinterCache {
 
         lock.lock()
 
-        guard let filesCache = cache[LinterCache.Key.files.rawValue] as? [String: Any],
+        guard let filesCache = cache[Key.files.rawValue] as? [String: Any],
             let entry = filesCache[file] as? [String: Any],
             let cacheLastModification = entry[Key.lastModification.rawValue] as? TimeInterval,
             cacheLastModification == lastModification.timeIntervalSinceReferenceDate,
